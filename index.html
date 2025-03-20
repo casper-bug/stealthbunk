@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bunk Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 30px;
+        }
+        .calculator {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            flex: 1;
+            min-width: 250px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-right: 5px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 5px;
+            border-left: 5px solid #3498db;
+        }
+        .result h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-radius: 5px 5px 0 0;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            color: #333;
+            margin: 0;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #3498db;
+            color: white;
+        }
+        .tabcontent {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+            animation: fadeEffect 1s;
+        }
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .timetable-container {
+            margin-top: 20px;
+        }
+        .subject-entry {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        .subject-entry input {
+            margin-bottom: 0;
+        }
+        .add-subject-btn {
+            background-color: #2ecc71;
+        }
+        .remove-subject-btn {
+            background-color: #e74c3c;
+            padding: 5px 10px;
+            margin: 0;
+        }
+        .days-input {
+            width: 60px;
+        }
+        .color-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        .timetable-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .timetable-grid th, .timetable-grid td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .timetable-grid th {
+            background-color: #f2f2f2;
+        }
+        .timetable-grid td {
+            position: relative;
+            height: 50px;
+            cursor: pointer;
+        }
+        .timetable-grid td.selected {
+            background-color: #e8f4f8;
+        }
+        .timetable-grid td.can-bunk {
+            background-color: #d4edda;
+        }
+        .timetable-grid td.cannot-bunk {
+            background-color: #f8d7da;
+        }
+        .subject-selector {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .subject-display {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .small-input {
+            width: 50px;
+            padding: 5px;
+            margin: 0 5px;
+        }
+        .bunk-status {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        .can-bunk-status {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .cannot-bunk-status {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .subject-summary {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border-left: 5px solid #3498db;
+        }
+        .subject-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .subject-info div {
+            flex: 1;
+            min-width: 150px;
+        }
+        .timetable-day {
+            margin-bottom: 5px;
+        }
+        .weekday-label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .bunk-checkbox {
+            margin-left: 10px;
+        }
+        .bunk-section {
+            margin-top: 30px;
+        }
+        .control-panel {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .subject-controls {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bunk Calculator</h1>
+        
+        <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'SimpleCalculator')">Simple Calculator</button>
+            <button class="tablinks" onclick="openTab(event, 'TimetableCalculator')">Timetable Calculator</button>
+        </div>
+        
+        <div id="SimpleCalculator" class="tabcontent" style="display: block;">
+            <h2>Simple Bunk Calculator</h2>
+            <p>Calculate how many days you can bunk based on your preferred attendance percentage and current attendance.</p>
+            
+            <div class="calculator">
+                <div class="input-group">
+                    <label for="total-classes">Total Classes Held:</label>
+                    <input type="number" id="total-classes" placeholder="Enter total classes" min="1">
+                    
+                    <label for="classes-attended">Classes Attended:</label>
+                    <input type="number" id="classes-attended" placeholder="Enter classes attended" min="0">
+                    
+                    <label for="min-percentage">Minimum Required Percentage:</label>
+                    <input type="number" id="min-percentage" placeholder="Enter minimum percentage" min="0" max="100" value="75">
+                </div>
+                
+                <div class="input-group">
+                    <label for="future-classes">Future Classes (optional):</label>
+                    <input type="number" id="future-classes" placeholder="Enter future classes" min="0">
+                    
+                    <div class="result">
+                        <h3>Current Attendance:</h3>
+                        <p id="current-percentage">--</p>
+                        
+                        <h3>You can bunk:</h3>
+                        <p id="bunk-days">--</p>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="calculateBunk()">Calculate</button>
+        </div>
+        
+        <div id="TimetableCalculator" class="tabcontent">
+            <h2>Timetable Bunk Calculator</h2>
+            <p>Enter your subjects and create your weekly timetable to calculate which days you can bunk.</p>
+            
+            <div class="subject-summary">
+                <h3>Subject Information</h3>
+                <div class="control-panel">
+                    <div class="subject-controls">
+                        <button class="add-subject-btn" onclick="addSubject()">Add Subject</button>
+                        <button onclick="calculateAllSubjects()">Calculate All</button>
+                    </div>
+                    <div>
+                        <button onclick="applyTimetable()">Apply Timetable</button>
+                    </div>
+                </div>
+                
+                <div id="subjects-container">
+                    <!-- Subject entries will be added here -->
+                </div>
+            </div>
+            
+            <div class="timetable-container">
+                <h3>Weekly Timetable</h3>
+                <p>Click on a cell to select a subject for that day and period.</p>
+                
+                <table class="timetable-grid" id="timetable-grid">
+                    <thead>
+                        <tr>
+                            <th>Period / Day</th>
+                            <th>Monday</th>
+                            <th>Tuesday</th>
+                            <th>Wednesday</th>
+                            <th>Thursday</th>
+                            <th>Friday</th>
+                            <th>Saturday</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timetable-body">
+                        <!-- Timetable rows will be added here -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="bunk-section">
+                <h3>Bunk Planner</h3>
+                <p>Select the days you want to bunk and see if it's safe to do so.</p>
+                
+                <div id="bunk-options">
+                    <!-- Bunk options will be added here -->
+                </div>
+                
+                <button onclick="calculateBunkPlan()">Check Bunk Plan</button>
+                
+                <div class="result">
+                    <h3>Bunk Analysis Results:</h3>
+                    <div id="bunk-results">
+                        <!-- Bunk results will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  
+<script>
+        // Initialize subjects with colors
+        const subjectColors = [
+            '#FF6B6B', '#48DBFB', '#1DD1A1', '#FD79A8', '#F7B731', 
+            '#A29BFE', '#54A0FF', '#00D2D3', '#576574', '#FF9F43'
+        ];
+        let subjects = [];
+        let timetable = {};
+        let bunkPlan = {};
+        
+        // Initialize the page
+        window.onload = function() {
+            // Add first subject
+            addSubject();
+            
+            // Initialize timetable
+            initializeTimetable();
+            
+            // Initialize bunk options
+            initializeBunkOptions();
+        };
+        
+        // Tab functionality
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+        
+        // Simple calculator
+        function calculateBunk() {
+            const totalClasses = parseInt(document.getElementById('total-classes').value) || 0;
+            const classesAttended = parseInt(document.getElementById('classes-attended').value) || 0;
+            const minPercentage = parseInt(document.getElementById('min-percentage').value) || 75;
+            const futureClasses = parseInt(document.getElementById('future-classes').value) || 0;
+            
+            if (totalClasses === 0) {
+                alert("Please enter the total number of classes.");
+                return;
+            }
+            
+            if (classesAttended > totalClasses) {
+                alert("Classes attended cannot be greater than total classes.");
+                return;
+            }
+            
+            // Calculate current percentage
+            const currentPercentage = (classesAttended / totalClasses) * 100;
+            
+            // Calculate how many classes can be bunked
+            const totalFutureClasses = totalClasses + futureClasses;
+            const minClassesToAttend = Math.ceil((totalFutureClasses * minPercentage) / 100);
+            const canBunk = Math.max(0, classesAttended + futureClasses - minClassesToAttend);
+            
+            // Display results
+            document.getElementById('current-percentage').textContent = 
+                `${currentPercentage.toFixed(2)}% (${classesAttended}/${totalClasses})`;
+            
+            document.getElementById('bunk-days').textContent = 
+                `${canBunk} out of ${futureClasses} future classes`;
+        }
+        
+        // Timetable calculator
+        function addSubject() {
+            const subjectsContainer = document.getElementById('subjects-container');
+            const subjectId = `subject-${subjects.length + 1}`;
+            const colorIndex = subjects.length % subjectColors.length;
+            const color = subjectColors[colorIndex];
+            
+            const newSubjectEntry = document.createElement('div');
+            newSubjectEntry.className = 'subject-entry';
+            newSubjectEntry.innerHTML = `
+                <div class="color-indicator" style="background-color: ${color};"></div>
+                <input type="text" placeholder="Subject Name" class="subject-name" value="Subject ${subjects.length + 1}">
+                <label>Min %:</label>
+                <input type="number" placeholder="Min %" class="min-percentage small-input" min="0" max="100" value="75">
+                <label>Total:</label>
+                <input type="number" placeholder="Total" class="total-classes small-input" min="1" value="0">
+                <label>Present:</label>
+                <input type="number" placeholder="Present" class="attended-classes small-input" min="0" value="0">
+                <label>Future:</label>
+                <input type="number" placeholder="Future" class="future-classes small-input" min="0" value="0">
+                <span class="bunk-status">--</span>
+                <button class="remove-subject-btn" onclick="removeSubject(this)">✕</button>
+            `;
+            
+            subjectsContainer.appendChild(newSubjectEntry);
+            
+            // Add subject to array
+            subjects.push({
+                id: subjectId,
+                name: `Subject ${subjects.length + 1}`,
+                color: color,
+                minPercentage: 75,
+                totalClasses: 0,
+                attendedClasses: 0,
+                futureClasses: 0,
+                canBunk: 0
+            });
+            
+            // Update timetable dropdown options
+            updateTimetableOptions();
+        }
+        
+        function removeSubject(btn) {
+            const subjectsContainer = document.getElementById('subjects-container');
+            const subjectEntry = btn.parentElement;
+            const index = Array.from(subjectsContainer.children).indexOf(subjectEntry);
+            
+            // Only remove if there's more than one subject
+            if (subjectsContainer.children.length > 1) {
+                subjectsContainer.removeChild(subjectEntry);
+                subjects.splice(index, 1);
+                updateTimetableOptions();
+            }
+        }
+        
+        function calculateAllSubjects() {
+            const subjectEntries = document.querySelectorAll('.subject-entry');
+            
+            subjectEntries.forEach((entry, index) => {
+                const subjectName = entry.querySelector('.subject-name').value || `Subject ${index + 1}`;
+                const minPercentage = parseInt(entry.querySelector('.min-percentage').value) || 75;
+                const totalClasses = parseInt(entry.querySelector('.total-classes').value) || 0;
+                const attendedClasses = parseInt(entry.querySelector('.attended-classes').value) || 0;
+                const futureClasses = parseInt(entry.querySelector('.future-classes').value) || 0;
+                
+                if (attendedClasses > totalClasses) {
+                    alert(`For ${subjectName}: Classes attended cannot be greater than total classes.`);
+                    return;
+                }
+                
+                // Calculate current percentage
+                const currentPercentage = totalClasses > 0 ? (attendedClasses / totalClasses) * 100 : 0;
+                
+                // Calculate how many classes can be bunked
+                const totalFutureClasses = totalClasses + futureClasses;
+                const minClassesToAttend = Math.ceil((totalFutureClasses * minPercentage) / 100);
+                const canBunk = Math.max(0, attendedClasses + futureClasses - minClassesToAttend);
+                
+                // Update subject in array
+                subjects[index].name = subjectName;
+                subjects[index].minPercentage = minPercentage;
+                subjects[index].totalClasses = totalClasses;
+                subjects[index].attendedClasses = attendedClasses;
+                subjects[index].futureClasses = futureClasses;
+                subjects[index].canBunk = canBunk;
+                subjects[index].currentPercentage = currentPercentage;
+                
+                // Display result
+                const status = entry.querySelector('.bunk-status');
+                status.textContent = `${currentPercentage.toFixed(1)}% | Can bunk: ${canBunk}`;
+                status.className = canBunk > 0 ? 'bunk-status can-bunk-status' : 'bunk-status cannot-bunk-status';
+            });
+            
+            // Update timetable display
+            updateTimetableDisplay();
+        }
+        
+        function initializeTimetable() {
+            const timetableBody = document.getElementById('timetable-body');
+            timetableBody.innerHTML = '';
+            
+            // Create periods (rows)
+            for (let period = 1; period <= 8; period++) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<th>Period ${period}</th>`;
+                
+                // Create days (columns)
+                const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                days.forEach(day => {
+                    const cell = document.createElement('td');
+                    cell.dataset.day = day;
+                    cell.dataset.period = period;
+                    cell.innerHTML = `
+                        <div class="subject-display">-</div>
+                        <select class="subject-selector" onchange="updateTimetableCell(this)">
+                            <option value="">- None -</option>
+                            ${subjects.map((subject, index) => `
+                                <option value="${index}">${subject.name}</option>
+                            `).join('')}
+                        </select>
+                    `;
+                    row.appendChild(cell);
+                    
+                    // Initialize timetable object
+                    if (!timetable[day]) timetable[day] = {};
+                    timetable[day][period] = null;
+                });
+                
+                timetableBody.appendChild(row);
+            }
+        }
+        
+        function updateTimetableOptions() {
+            const selectors = document.querySelectorAll('.subject-selector');
+            selectors.forEach(selector => {
+                const currentValue = selector.value;
+                selector.innerHTML = `
+                    <option value="">- None -</option>
+                    ${subjects.map((subject, index) => `
+                        <option value="${index}" ${currentValue == index ? 'selected' : ''}>${subject.name}</option>
+                    `).join('')}
+                `;
+            });
+        }
+        
+        function updateTimetableCell(selector) {
+            const cell = selector.parentElement;
+            const day = cell.dataset.day;
+            const period = cell.dataset.period;
+            const subjectIndex = selector.value;
+            
+            if (subjectIndex === "") {
+                cell.querySelector('.subject-display').textContent = "-";
+                cell.style.backgroundColor = "";
+                timetable[day][period] = null;
+            } else {
+                const subject = subjects[subjectIndex];
+                cell.querySelector('.subject-display').textContent = subject.name;
+                cell.style.backgroundColor = subject.color + '40'; // Add transparency
+                timetable[day][period] = subjectIndex;
+            }
+        }
+        
+        function updateTimetableDisplay() {
+            const cells = document.querySelectorAll('#timetable-grid td');
+            cells.forEach(cell => {
+                const day = cell.dataset.day;
+                const period = cell.dataset.period;
+                const subjectIndex = timetable[day][period];
+                
+                if (subjectIndex !== null) {
+                    const subject = subjects[subjectIndex];
+                    const subjectName = subject.name;
+                    const canBunk = subject.canBunk > 0;
+                    
+                    cell.querySelector('.subject-display').textContent = subjectName;
+                    cell.style.backgroundColor = subject.color + '40'; // Add transparency
+                    
+                    // Add visual indication if can bunk
+                    if (canBunk) {
+                        cell.classList.add('can-bunk');
+                        cell.classList.remove('cannot-bunk');
+                    } else {
+                        cell.classList.add('cannot-bunk');
+                        cell.classList.remove('can-bunk');
+                    }
+                }
+            });
+        }
+        
+        function applyTimetable() {
+            // First calculate all subjects
+            calculateAllSubjects();
+            
+            // Then update the timetable
+            updateTimetableDisplay();
+            
+            // Update bunk options
+            updateBunkOptions();
+        }
+        
+        function initializeBunkOptions() {
+            const bunkOptions = document.getElementById('bunk-options');
+            bunkOptions.innerHTML = '';
+            
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            days.forEach(day => {
+                const dayOption = document.createElement('div');
+                dayOption.className = 'timetable-day';
+                dayOption.innerHTML = `
+                    <span class="weekday-label">${day}:</span>
+                    <input type="checkbox" id="bunk-${day}" class="bunk-checkbox" onchange="updateBunkPlan('${day}')">
+                    <label for="bunk-${day}">Bunk this day</label>
+                    <span id="bunk-status-${day}" class="bunk-status">--</span>
+                `;
+                bunkOptions.appendChild(dayOption);
+                
+                // Initialize bunk plan
+                bunkPlan[day] = false;
+            });
+        }
+        
+        function updateBunkOptions() {
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            days.forEach(day => {
+                const checkbox = document.getElementById(`bunk-${day}`);
+                const status = document.getElementById(`bunk-status-${day}`);
+                
+                // Count subjects for this day
+                let subjectsForDay = 0;
+                let canBunkAll = true;
+                
+                for (let period = 1; period <= 8; period++) {
+                    const subjectIndex = timetable[day][period];
+                    if (subjectIndex !== null) {
+                        subjectsForDay++;
+                        if (subjects[subjectIndex].canBunk <= 0) {
+                            canBunkAll = false;
+                        }
+                    }
+                }
+                
+                // Update status
+                if (subjectsForDay === 0) {
+                    status.textContent = "No classes";
+                    status.className = "bunk-status";
+                    checkbox.disabled = true;
+                } else if (canBunkAll) {
+                    status.textContent = "Safe to bunk";
+                    status.className = "bunk-status can-bunk-status";
+                    checkbox.disabled = false;
+                } else {
+                    status.textContent = "Not safe to bunk";
+                    status.className = "bunk-status cannot-bunk-status";
+                    checkbox.disabled = false;
+                }
+            });
+        }
+        
+        function updateBunkPlan(day) {
+            const checkbox = document.getElementById(`bunk-${day}`);
+            bunkPlan[day] = checkbox.checked;
+        }
+        
+        function calculateBunkPlan() {
+            // First make sure we have updated calculations
+            calculateAllSubjects();
+            
+            // Now analyze the bunk plan
+            const bunkResults = document.getElementById('bunk-results');
+            bunkResults.innerHTML = '';
+            
+            const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const selectedDays = days.filter(day => bunkPlan[day]);
+            
+            if (selectedDays.length === 0) {
+                bunkResults.innerHTML = '<p>No days selected for bunking.</p>';
+                return;
+            }
+            
+            // Create temporary copy of subjects to simulate the bunk plan
+            const tempSubjects = JSON.parse(JSON.stringify(subjects));
+            
+            // Analyze each selected day
+            let allSafe = true;
+            const results = [];
+            
+            selectedDays.forEach(day => {
+                let dayResult = { day: day, subjects: [], safe: true };
+                
+                // Check each period of the day
+                for (let period = 1; period <= 8; period++) {
+                    const subjectIndex = timetable[day][period];
+                    if (subjectIndex !== null) {
+                        const subject = tempSubjects[subjectIndex];
+                        
+                        // Check if this subject can be bunked
+                        if (subject.canBunk <= 0) {
+                            dayResult.safe = false;
+                            allSafe = false;
+                        }
+                        
+                        // Add subject to the day's results if not already there
+                        if (!dayResult.subjects.some(s => s.index === subjectIndex)) {
+                            dayResult.subjects.push({
+                                index: subjectIndex,
+                                name: subject.name,
+                                canBunk: subject.canBunk
+                            });
+                            
+                            // Decrease the canBunk count for this subject
+                            subject.canBunk--;
+                        }
+                    }
+                }
+                
+                results.push(dayResult);
+            });
+            
+            // Display results
+            if (allSafe) {
+                bunkResults.innerHTML = '<p style="color: #155724; font-weight: bold;">✓ It\'s safe to bunk all selected days!</p>';
+            } else {
+                bunkResults.innerHTML = '<p style="color: #721c24; font-weight: bold;">✗ Not safe to bunk all selected days.</p>';
+            }
+            
+            results.forEach(result => {
+                const dayResult = document.createElement('div');
+                dayResult.innerHTML = `
+                    <h4>${result.day} - ${result.safe ? '<span style="color: #155724;">Safe to bunk</span>' : '<span style="color: #721c24;">Not safe to bunk</span>'}</h4>
+                    <ul>
+                        ${result.subjects.map(subject => `
+                            <li>${subject.name}: ${subject.canBunk} bunks remaining</li>
+                        `).join('')}
+                    </ul>
+                `;
+                bunkResults.appendChild(dayResult);
+            });
+        }
+    </script>
+</body>
+</html>
