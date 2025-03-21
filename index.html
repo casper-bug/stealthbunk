@@ -2,257 +2,454 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bunk Calculator</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        h2 {
-            color: #3498db;
-            margin-top: 30px;
-        }
-        .calculator {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-        .input-group {
-            flex: 1;
-            min-width: 250px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-            margin-right: 5px;
-        }
-        button:hover {
-            background-color: #2980b9;
-        }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f0f8ff;
-            border-radius: 5px;
-            border-left: 5px solid #3498db;
-        }
-        .result h3 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        .tab {
-            overflow: hidden;
-            border: 1px solid #ccc;
-            background-color: #f1f1f1;
-            border-radius: 5px 5px 0 0;
-        }
-        .tab button {
-            background-color: inherit;
-            float: left;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-            color: #333;
-            margin: 0;
-        }
-        .tab button:hover {
-            background-color: #ddd;
-        }
-        .tab button.active {
-            background-color: #3498db;
-            color: white;
-        }
-        .tabcontent {
-            display: none;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-top: none;
-            border-radius: 0 0 5px 5px;
-            animation: fadeEffect 1s;
-        }
-        @keyframes fadeEffect {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .timetable-container {
-            margin-top: 20px;
-        }
-        .subject-entry {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-        .subject-entry input {
-            margin-bottom: 0;
-        }
-        .add-subject-btn {
-            background-color: #2ecc71;
-        }
-        .remove-subject-btn {
-            background-color: #e74c3c;
-            padding: 5px 10px;
-            margin: 0;
-        }
-        .days-input {
-            width: 60px;
-        }
-        .color-indicator {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 10px;
-        }
-        .timetable-grid {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .timetable-grid th, .timetable-grid td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-        }
-        .timetable-grid th {
-            background-color: #f2f2f2;
-        }
-        .timetable-grid td {
-            position: relative;
-            height: 50px;
-            cursor: pointer;
-        }
-        .timetable-grid td.selected {
-            background-color: #e8f4f8;
-        }
-        .timetable-grid td.can-bunk {
-            background-color: #d4edda;
-        }
-        .timetable-grid td.cannot-bunk {
-            background-color: #f8d7da;
-        }
-        .subject-selector {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-        .subject-display {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .small-input {
-            width: 50px;
-            padding: 5px;
-            margin: 0 5px;
-        }
-        .bunk-status {
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-        .can-bunk-status {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .cannot-bunk-status {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-        .subject-summary {
-            margin-bottom: 20px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 5px;
-            border-left: 5px solid #3498db;
-        }
-        .subject-info {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .subject-info div {
-            flex: 1;
-            min-width: 150px;
-        }
-        .timetable-day {
-            margin-bottom: 5px;
-        }
-        .weekday-label {
-            font-weight: bold;
-            margin-right: 10px;
-        }
-        .bunk-checkbox {
-            margin-left: 10px;
-        }
-        .bunk-section {
-            margin-top: 30px;
-        }
-        .control-panel {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .subject-controls {
-            display: flex;
-            gap: 10px;
-        }
+        /* Main theme colors */
+:root {
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #252525;
+  --text-primary: #e0e0e0;
+  --text-secondary: #b0b0b0;
+  --accent-primary: #6200ee;
+  --accent-secondary: #bb86fc;
+  --error: #cf6679;
+  --success: #03dac6;
+  --warning: #ffab40;
+  --card-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Base styles */
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  background: var(--bg-secondary);
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+}
+
+h1, h2, h3 {
+  color: var(--text-primary);
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 2.5rem;
+  background: linear-gradient(90deg, var(--accent-secondary), var(--accent-primary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 30px;
+}
+
+h2 {
+  font-size: 1.8rem;
+  color: var(--accent-secondary);
+  margin-top: 30px;
+}
+
+h3 {
+  font-size: 1.3rem;
+  border-bottom: 1px solid var(--bg-tertiary);
+  padding-bottom: 10px;
+}
+
+.calculator {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.input-group {
+  flex: 1;
+  min-width: 280px;
+  background: var(--bg-tertiary);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #444;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  margin-bottom: 15px;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-secondary);
+  box-shadow: 0 0 0 2px rgba(187, 134, 252, 0.3);
+}
+
+button {
+  background: var(--accent-primary);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 5px 5px 5px 0;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background: var(--accent-secondary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.result {
+  margin-top: 20px;
+  padding: 20px;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  border-left: 5px solid var(--accent-primary);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Tabs */
+.tab {
+  overflow: hidden;
+  border: none;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.tab button {
+  background: transparent;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 15px 20px;
+  transition: 0.3s;
+  color: var(--text-secondary);
+  margin: 0;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.tab button:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: none;
+  box-shadow: none;
+}
+
+.tab button.active {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.tabcontent {
+  display: none;
+  padding: 20px;
+  border: none;
+  border-radius: 12px;
+  background: var(--bg-secondary);
+  animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th, td {
+  border: none;
+  padding: 15px;
+  text-align: left;
+}
+
+th {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+td {
+  border-bottom: 1px solid var(--bg-tertiary);
+}
+
+/* Subject entries */
+.subject-entry {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+  flex-wrap: wrap;
+  background: var(--bg-tertiary);
+  padding: 15px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.subject-entry:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.subject-entry input {
+  margin-bottom: 0;
+}
+
+.add-subject-btn {
+  background: var(--success);
+}
+
+.remove-subject-btn {
+  background: var(--error);
+  padding: 6px 10px;
+  margin: 0;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.small-input {
+  width: 60px;
+  padding: 8px;
+  margin: 0 5px;
+}
+
+.color-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Status indicators */
+.bunk-status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  margin-left: 5px;
+  font-weight: 500;
+}
+
+.can-bunk-status {
+  background: rgba(3, 218, 198, 0.2);
+  color: var(--success);
+}
+
+.cannot-bunk-status {
+  background: rgba(207, 102, 121, 0.2);
+  color: var(--error);
+}
+
+/* Timetable */
+.timetable-grid th, .timetable-grid td {
+  text-align: center;
+  padding: 15px;
+  position: relative;
+}
+
+.timetable-grid td {
+  height: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.timetable-grid td.can-bunk {
+  background: rgba(3, 218, 198, 0.1);
+  border-left: 3px solid var(--success);
+}
+
+.timetable-grid td.cannot-bunk {
+  background: rgba(207, 102, 121, 0.1);
+  border-left: 3px solid var(--error);
+}
+
+.subject-selector {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.subject-display {
+  font-weight: 500;
+}
+
+.timetable-day {
+  margin-bottom: 15px;
+  padding: 15px;
+  background: var(--bg-tertiary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.weekday-label {
+  font-weight: 500;
+  margin-right: 15px;
+  min-width: 100px;
+}
+
+/* Checkboxes */
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 10px;
+  accent-color: var(--accent-primary);
+}
+
+/* Media Queries */
+@media only screen and (max-width: 1024px) {
+  .container {
+    padding: 20px;
+    margin: 10px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .calculator {
+    flex-direction: column;
+  }
+  
+  .input-group {
+    min-width: 100%;
+  }
+  
+  .tab button {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+  
+  .subject-entry {
+    flex-wrap: wrap;
+  }
+  
+  .timetable-grid {
+    font-size: 14px;
+  }
+  
+  .timetable-grid th, .timetable-grid td {
+    padding: 10px 5px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .tab {
+    flex-wrap: wrap;
+  }
+  
+  .tab button {
+    flex: 1;
+    width: 100%;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 10px;
+  }
+  
+  .result {
+    padding: 15px;
+  }
+  
+  .small-input {
+    width: 50px;
+    padding: 6px;
+  }
+  
+  .timetable-grid {
+    font-size: 12px;
+  }
+  
+  .subject-display {
+    font-size: 12px;
+  }
+  
+  .timetable-day {
+    flex-wrap: wrap;
+  }
+  
+  .weekday-label {
+    min-width: auto;
+    margin-bottom: 5px;
+    width: 100%;
+  }
+}
+
+/* Dark scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
     </style>
 </head>
 <body>
