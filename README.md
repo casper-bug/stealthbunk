@@ -35,3 +35,4 @@ Contributions are welcome! If you have any suggestions, bug reports, or feature 
 ## Disclaimer
 
 This tool is provided for educational purposes only. Use it responsibly and ensure you comply with your institution's attendance policies.
+
