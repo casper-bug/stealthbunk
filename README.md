@@ -1,12 +1,11 @@
 # StealthBunk: Simple Attendance Calculator
 
-A web-based tool to help students calculate how many classes they can skip or need to attend to maintain their desired attendance percentage.
+A web-based tool to help students calculate how many classes they can skip or need to attend to maintain 75% attendance percentage.
 
 ## Features
 
 - **Input Total Classes and Attended Classes**: Enter the total number of classes held and the number of classes you've attended.
-- **Desired Attendance Percentage**: Use a slider to set your desired attendance percentage.
-- **Calculate Bunk Days**: Determine how many classes you can skip or need to attend to maintain your desired attendance.
+- **Calculate Bunk Days**: Determine how many classes you can skip or need to attend to maintain 75% attendance.
 - **Responsive Design**: Works seamlessly on both desktop and mobile devices.
 
 ## How to Use
